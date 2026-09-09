@@ -56,6 +56,18 @@ Screenshot desktop e mobile e PDF sono stati anche ispezionati visivamente. L'es
 
 Con le tabelle aperte, a 320 pixel il contenuto minimo della griglia allargava la pagina. Correzione: `min-width: 0` sul pannello risultati e larghezza massima del contenitore delle tabelle. La suite completa successiva ha superato tutti i 66 controlli.
 
+## Verifica della pubblicazione
+
+Il sito pubblico è disponibile su [GitHub Pages](https://drwhite75.github.io/ral-netto-2026/).
+
+Il 9 settembre 2026 è stata verificata la pubblicazione su GitHub Pages. I file HTML, JavaScript, CSS e l'icona serviti via HTTPS coincidono con la versione verificata del progetto.
+
+La stessa suite browser è stata eseguita con il sito pubblico come destinazione: **66 controlli superati**, compreso il controllo offline della copia locale. Verificati input, calcoli, cambio mensilità, errori, esportazione e layout responsive. Nessun errore JavaScript o richiesta a domini terzi durante il calcolo.
+
+Esempio verificato online: RAL 35.000 euro, 13 mensilità, netto annuale **26.032,17 euro**, media mensile **2.002,47 euro**.
+
+I percorsi pubblici `.git/config`, `.env` e `app.js.map` restituiscono HTTP 404. Questi controlli non equivalgono a un audit di sicurezza completo.
+
 ## Fonti e revisione
 
 Una revisione separata delle fonti ha confermato i parametri su TUIR, L. 207/2024, INPS e fonti locali. Anche la metodologia è stata riletta separatamente e l'esempio 35.000 euro è stato ricalcolato al centesimo.

@@ -2,7 +2,7 @@
 
 Una pagina web in italiano che calcola il netto annuale, la media mensile e ogni trattenuta del caso standard.
 
-**Apri `index.html` in un browser e premi «Calcola il netto».** Non servono installazioni, account, chiavi API o un backend. Funziona anche offline.
+**[Apri il calcolatore online](https://drwhite75.github.io/ral-netto-2026/)** oppure apri `index.html` nel browser e premi «Calcola il netto». Non servono account, chiavi API o un backend. La copia locale funziona anche offline.
 
 ## Cosa puoi fare
 
@@ -117,20 +117,12 @@ Variabili facoltative: `TEST_URL`, `TEST_OUTPUT`, `PLAYWRIGHT_MODULE` (per un'in
 - [Scelte di prodotto](docs/SCELTE-PRODOTTO.md)
 - [Verifiche eseguite](docs/VERIFICA.md)
 
-## Repository e consegna
+## Sito e repository
 
-Repository di lavoro: [drwhite75/ral-netto-2026](https://github.com/drwhite75/ral-netto-2026).
+- **Calcolatore online:** https://drwhite75.github.io/ral-netto-2026/
+- **Codice, fonti e test:** https://github.com/drwhite75/ral-netto-2026
 
-**La pubblicazione per i valutatori è un passaggio separato.** Finché il repository è privato, il link richiede un account autorizzato e non è una demo pubblica. GitHub Pages non viene attivato con il semplice caricamento del codice.
+GitHub Pages pubblica il sito statico dal branch `main`, cartella principale. I cambiamenti caricati su `main` vengono pubblicati dopo il completamento del deployment. Lo stato delle pubblicazioni è consultabile nella scheda Actions del repository.
 
-Quando decidi di rendere il progetto pubblico, consiglio repository pubblico più GitHub Pages: il repository rende ispezionabili codice, fonti e test, mentre Pages permette di usare la demo.
-
-Il sito è statico, non richiede segreti né build. Per attivare Pages dopo avere scelto la visibilità appropriata:
-
-1. In **Settings → Pages**, scegli **Deploy from a branch**.
-2. Seleziona il branch che contiene i file e la cartella **/(root)**.
-3. Attendi la pubblicazione e usa l'URL realmente mostrato da GitHub Pages.
-4. Aprilo in una finestra privata, verifica un calcolo e controlla che i link alla documentazione siano consultabili.
-
-Non usare un indirizzo `localhost` nell'email: funziona soltanto sul computer che ospita il server. Non inventare il link della demo prima che Pages lo mostri.
+Il calcolatore elabora la RAL nel browser. Non include credenziali, servizi di raccolta dati o richieste contenenti la retribuzione. Gli indirizzi `localhost` indicati per lo sviluppo sono indirizzi standard della macchina di chi esegue il progetto, non indirizzi del computer dell'autore.
 
