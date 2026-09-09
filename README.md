@@ -125,4 +125,3 @@ Variabili facoltative: `TEST_URL`, `TEST_OUTPUT`, `PLAYWRIGHT_MODULE` (per un'in
 GitHub Pages pubblica il sito statico dal branch `main`, cartella principale. I cambiamenti caricati su `main` vengono pubblicati dopo il completamento del deployment. Lo stato delle pubblicazioni è consultabile nella scheda Actions del repository.
 
 Il calcolatore elabora la RAL nel browser. Non include credenziali, servizi di raccolta dati o richieste contenenti la retribuzione. Gli indirizzi `localhost` indicati per lo sviluppo sono indirizzi standard della macchina di chi esegue il progetto, non indirizzi del computer dell'autore.
-
