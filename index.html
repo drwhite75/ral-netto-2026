@@ -1,77 +1,151 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Calcolatore netto da RAL 2026</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Dalla RAL al netto annuale e mensile: un prototipo trasparente per un dipendente privato residente a Milano, anno fiscale 2026.">
+  <meta name="theme-color" content="#183f35">
+  <title>In chiaro | Dalla RAL al netto</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script src="calc.js" defer></script>
+  <script src="app.js" defer></script>
 </head>
 <body>
-  <header class="top">
-    <div>
-      <p class="kicker">Calcolatore stipendio · 2026</p>
-      <h1>Da RAL a netto annuale</h1>
-      <p class="lede">Caso standard 2026: impiegato a tempo indeterminato, residente a Milano, nessuna agevolazione particolare. Motore in JavaScript visibile e commentato — non è una black box.</p>
-    </div>
-    <a class="doc-link" href="LOGICA.md">Come è fatto il calcolo →</a>
+  <a class="skip-link" href="#calcolatore">Vai al calcolatore</a>
+  <header class="site-header wrap">
+    <a class="wordmark" href="#" aria-label="In chiaro, inizio pagina"><span class="brand-mark" aria-hidden="true">=</span> in chiaro<span class="wordmark-dot">.</span></a>
+    <nav aria-label="Navigazione principale">
+      <a href="#metodo">Come funziona</a>
+      <a href="#fonti">Fonti</a>
+      <span class="project-tag">Simulatore 2026</span>
+    </nav>
   </header>
-  <main>
-    <section class="panel input-panel">
-      <form id="form" autocomplete="off">
-        <label for="ral">Retribuzione annua lorda (RAL)</label>
-        <div class="ral-row">
-          <span class="euro">€</span>
-          <input id="ral" name="ral" type="number" min="0" step="100" value="35000" required />
-        </div>
-        <p class="hint">La RAL include la tredicesima. Non include TFR (accantonato dal datore, non è una trattenuta in busta).</p>
-        <fieldset class="assumptions">
-          <legend>Ipotesi fisse di questo prototipo</legend>
-          <ul>
-            <li>Impiegato, tempo indeterminato, anno intero (365 giorni)</li>
-            <li>Residenza fiscale: Milano, Lombardia</li>
-            <li>Nessun familiare a carico, niente oneri deducibili, niente bonus / sgravi / welfare</li>
-            <li>Iscritto INPS dopo il 31/12/1995 (vale il massimale contributivo)</li>
-          </ul>
-        </fieldset>
-        <button type="submit" id="calcola">Calcola</button>
-      </form>
+
+  <main class="wrap">
+    <section class="intro" aria-labelledby="page-title">
+      <div class="eyebrow"><span class="small-rule" aria-hidden="true"></span> CALCOLATORE STIPENDIO · 2026</div>
+      <h1 id="page-title">Il tuo lordo.<br>Il tuo <span>netto, in chiaro.</span></h1>
+      <p class="intro-copy">Quanto ti resta della RAL? Una stima annuale, con ogni trattenuta spiegata. Nessuna percentuale magica.</p>
+      <p class="scenario-line"><span>Milano, Lombardia</span><span>Tempo indeterminato</span><span>Anno intero</span></p>
     </section>
-    <section class="panel results" id="results" hidden>
-      <div class="kpis">
-        <article>
-          <h2>Netto annuale</h2>
-          <p class="big" id="netto-anno">—</p>
-        </article>
-        <article>
-          <h2>Netto mensile / 13</h2>
-          <p class="big" id="netto-13">—</p>
-          <p class="sub" id="netto-12"></p>
-        </article>
-        <article>
-          <h2>Tasse e imposte</h2>
-          <p class="big" id="tasse">—</p>
-          <p class="sub">IRPEF + addizionali − bonus fiscali in detrazione</p>
-        </article>
-      </div>
-      <h3>Voci trattenute dal lordo</h3>
-      <table class="breakdown" id="breakdown"></table>
-      <div class="grid-2">
-        <div>
-          <h3>Scaglioni IRPEF</h3>
-          <table class="mini" id="irpef-parts"></table>
+
+    <div class="calculator-layout" id="calcolatore">
+      <aside class="input-panel" aria-labelledby="input-title">
+        <p class="section-kicker">01 / IL PUNTO DI PARTENZA</p>
+        <h2 id="input-title">Partiamo dalla RAL.</h2>
+        <p class="panel-intro">La retribuzione annua lorda comprende anche tredicesima ed eventuale quattordicesima.</p>
+        <form id="salary-form" novalidate>
+          <label class="input-label" for="ral">Retribuzione annua lorda</label>
+          <div class="money-input"><span aria-hidden="true">€</span><input id="ral" name="ral" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="35.000" required aria-describedby="ral-hint ral-error"></div>
+          <p id="ral-hint" class="field-hint">Da 20.000 a 100.000 €. Es. 35.000,50</p>
+          <p id="ral-error" class="field-error" role="alert" hidden></p>
+          <div class="presets" aria-label="Importi di esempio">
+            <span>Prova</span>
+            <button type="button" data-ral="25000">25.000 €</button>
+            <button type="button" data-ral="35000">35.000 €</button>
+            <button type="button" data-ral="50000">50.000 €</button>
+          </div>
+          <fieldset class="months-fieldset">
+            <legend>Mensilità</legend>
+            <div class="segmented-control">
+              <label><input type="radio" name="months" value="12"><span>12</span></label>
+              <label><input type="radio" name="months" value="13" checked><span>13</span></label>
+              <label><input type="radio" name="months" value="14"><span>14</span></label>
+            </div>
+            <p class="field-hint">Cambiano la media mensile, non il netto annuo.</p>
+          </fieldset>
+          <button class="calculate-button" type="submit"><span>Calcola il netto</span><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 12h15M13 5l7 7-7 7"/></svg></button>
+          <p class="privacy-note"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5 7V5a3 3 0 0 1 6 0v2"/></svg> Il calcolo resta nel tuo browser.</p>
+        </form>
+        <details class="assumptions">
+          <summary>Il caso simulato <span aria-hidden="true">+</span></summary>
+          <div>
+            <p>Impiegato privato a tempo indeterminato per 365 giorni, domiciliato a Milano al 1° gennaio 2026, senza altri redditi, familiari a carico o spese detraibili.</p>
+            <p>INPS semplificata: 9,19% IVS, più 1% sopra 56.224 €. Esclusi FIS, CIGS e fondi contrattuali. Non è la quota contributiva esatta di ogni CCNL.</p>
+            <p>Inclusi i benefici fiscali ordinari spettanti. Esclusi TFR, premi, benefit e contributi del datore. <a href="#metodo">Tutti i limiti del modello</a>.</p>
+          </div>
+        </details>
+      </aside>
+
+      <section class="results-panel" aria-labelledby="result-title">
+        <div class="result-topline"><p class="section-kicker">02 / LA TUA PROIEZIONE</p><span class="estimate-badge">Stima 2026</span></div>
+        <div id="empty-state" class="empty-state">
+          <div class="empty-receipt" aria-hidden="true"><span></span><span></span><span></span><b>€</b></div>
+          <h2 id="result-title">Il netto, voce per voce.</h2>
+          <p>Inserisci la RAL e premi <strong>Calcola il netto</strong>.<br>Qui vedrai quanto resta a te e dove va il resto.</p>
         </div>
-        <div>
-          <h3>Addizionale regionale Lombardia</h3>
-          <table class="mini" id="reg-parts"></table>
+        <div id="result-content" hidden>
+          <p id="calculated-for" class="calculated-for"></p>
+          <p id="stale-warning" class="stale-warning" role="status" hidden>Hai modificato gli input. Premi Calcola per aggiornare questi risultati.</p>
+          <div class="net-heading">
+            <div><h2 class="metric-label">Netto medio per mensilità</h2><p class="net-amount" id="net-monthly"></p><p class="metric-context" id="monthly-context"></p></div>
+            <div class="annual-net"><span>Netto annuale</span><strong id="net-annual"></strong><span>già al netto delle trattenute</span></div>
+          </div>
+          <p class="monthly-caution">Una media, non il singolo cedolino: tredicesima, quattordicesima e conguagli possono avere importi diversi.</p>
+          <div class="allocation" aria-label="Ripartizione annuale">
+            <div class="allocation-bar" aria-hidden="true"><span id="bar-net" class="bar-net"></span><span id="bar-inps" class="bar-inps"></span><span id="bar-tax" class="bar-tax"></span></div>
+            <div class="allocation-legend">
+              <div><span class="legend-label"><i class="dot dot-net"></i>A te</span><strong id="legend-net"></strong></div>
+              <div><span class="legend-label"><i class="dot dot-inps"></i>Contributi INPS</span><strong id="legend-inps"></strong></div>
+              <div><span class="legend-label"><i class="dot dot-tax"></i>Imposte</span><strong id="legend-tax"></strong></div>
+            </div>
+            <p id="allocation-note" class="field-hint"></p>
+          </div>
+          <div class="ledger-heading"><h3>Dal lordo al netto</h3><span>Importi annuali</span></div>
+          <dl class="ledger" id="ledger"></dl>
+          <div class="tax-summary"><p><strong id="tax-total"></strong> di imposte annue</p><span id="tax-rate"></span></div>
+          <p class="tax-summary-note">Le imposte sono IRPEF e addizionali. I contributi INPS finanziano la previdenza e sono mostrati separatamente.</p>
+          <details class="irpef-details">
+            <summary>Come si arriva all’IRPEF netta <span aria-hidden="true">+</span></summary>
+            <div class="details-inner">
+              <p id="taxable-note"></p>
+              <div class="table-scroll"><table><caption>IRPEF 2026, applicata per scaglioni</caption><thead><tr><th scope="col">Fascia imponibile</th><th scope="col">Aliquota</th><th scope="col">La tua quota</th><th scope="col">Imposta</th></tr></thead><tbody id="irpef-brackets"></tbody></table></div>
+              <dl class="deduction-ledger" id="deductions"></dl>
+              <p id="deduction-note" class="field-hint"></p>
+            </div>
+          </details>
+          <details class="regional-details">
+            <summary>Come si calcolano le addizionali <span aria-hidden="true">+</span></summary>
+            <div class="details-inner">
+              <div class="table-scroll"><table><caption>Lombardia, aliquote progressive</caption><thead><tr><th scope="col">Fascia imponibile</th><th scope="col">Aliquota</th><th scope="col">La tua quota</th><th scope="col">Imposta</th></tr></thead><tbody id="regional-brackets"></tbody></table></div>
+              <p id="municipal-note"></p>
+            </div>
+          </details>
+          <div class="result-actions"><button type="button" id="download-result">Scarica il riepilogo .txt <span aria-hidden="true">↓</span></button><button type="button" id="print-result">Stampa / Salva PDF <span aria-hidden="true">↗</span></button></div>
         </div>
-      </div>
-      <p class="formula" id="formula"></p>
+        <noscript><p class="field-error">Per usare il calcolatore, attiva JavaScript nel browser. Formule e fonti restano consultabili qui sotto.</p></noscript>
+      </section>
+    </div>
+    <p id="announcer" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
+
+    <section class="method-section" id="metodo" aria-labelledby="method-title">
+      <div class="section-intro"><p class="section-kicker">03 / NESSUNA SCATOLA NERA</p><h2 id="method-title">Un calcolo che<br>puoi ricostruire.</h2><p>Una proiezione di competenza annuale. Ogni passaggio parte dal precedente, non da una percentuale stimata sul lordo.</p></div>
+      <ol class="method-steps">
+        <li><span class="step-number">1</span><div><h3>Prima, i contributi.</h3><p>Dalla RAL togliamo la quota previdenziale del dipendente: 9,19% più l’1% sulla parte oltre 56.224 €. Il risultato è l’imponibile fiscale di questo scenario.</p></div></li>
+        <li><span class="step-number">2</span><div><h3>Poi, le imposte effettive.</h3><p>IRPEF a scaglioni del 23%, 33% e 43%, meno detrazioni da lavoro dipendente e ulteriore detrazione del cuneo fiscale, se spettante. Aggiungiamo le addizionali Lombardia e Milano.</p></div></li>
+        <li><span class="step-number">3</span><div><h3>Infine, quello che resta a te.</h3><p>RAL meno contributi e imposte, più l’eventuale bonus non imponibile del cuneo fiscale. Dividiamo il netto annuo per le mensilità selezionate: questa è la media mensile.</p></div></li>
+      </ol>
+    </section>
+
+    <section class="limits-section" aria-labelledby="limits-title">
+      <h2 id="limits-title">Semplificazioni, dichiarate.</h2>
+      <div class="limits-copy"><p><strong>Un solo profilo.</strong> Anno intero, un datore, retribuzione ordinaria costante. La RAL coincide con l’imponibile contributivo. Non gestiamo part-time, cambi di residenza, assunzioni in corso d’anno, redditi ulteriori o regimi speciali. Escluse anche le imposte sostitutive 2026 su rinnovi CCNL, turni e straordinari.</p><p><strong>Un contributo semplificato.</strong> Il 9,19% è l’ipotesi IVS del modello, non un’aliquota universale. Non simuliamo quote aggiuntive FIS/CIGS, fondi di settore, minimali contrattuali e arrotondamenti mensili. La RAL massima è inferiore al massimale pensionistico 2026.</p><p><strong>Una stima, non una busta paga.</strong> Le addizionali sono attribuite all’anno dei redditi, senza simulare il calendario di acconti e saldi. Il netto mensile è una media. Gli importi sono arrotondati al centesimo per voce. Il trattamento integrativo non spetta nel profilo e intervallo supportati, in assenza di altri oneri.</p><p><strong>Il TFR resta fuori.</strong> Non è una trattenuta dal netto né una somma mensile disponibile. Anche i contributi del datore sono esclusi: questo calcolatore non stima il costo azienda.</p></div>
+    </section>
+
+    <section class="sources-section" id="fonti" aria-labelledby="sources-title">
+      <div><p class="section-kicker">04 / LE FONTI</p><h2 id="sources-title">Le regole dietro i numeri.</h2><p class="sources-intro">Parametri per i redditi 2026. Ricerca del 9 settembre 2026.<br>Il 730/2026 riguarda invece i redditi 2025.</p></div>
+      <ol class="source-list">
+        <li><a href="https://www.normattiva.it/uri-res/N2Ls?urn:nir:stato:decreto.del.presidente.della.repubblica:1986-12-22;917~art11!vig=" target="_blank" rel="noopener noreferrer"><span><strong>IRPEF 2026</strong><small>TUIR art. 11, aggiornato dalla L. 199/2025 · Normattiva</small></span><span aria-hidden="true">↗</span></a></li>
+        <li><a href="https://www.normattiva.it/uri-res/N2Ls?urn:nir:stato:decreto.del.presidente.della.repubblica:1986-12-22;917~art13!vig=" target="_blank" rel="noopener noreferrer"><span><strong>Detrazioni e redditi da lavoro</strong><small>TUIR art. 13, detrazioni e troncamento dei rapporti · Normattiva</small></span><span aria-hidden="true">↗</span></a></li>
+        <li><a href="https://noipa.mef.gov.it/cl/en/taglio-del-cuneo-fiscale" target="_blank" rel="noopener noreferrer"><span><strong>Bonus e ulteriore detrazione</strong><small>L. 207/2024, commi 4–9 · FAQ NoiPA, MEF</small></span><span aria-hidden="true">↗</span></a></li>
+        <li><a href="https://www.regione.lombardia.it/bollo-auto-e-tributi-regionali/red-addizionale-regionale-irpef" target="_blank" rel="noopener noreferrer"><span><strong>Addizionale regionale</strong><small>Scaglioni dall’1,23% all’1,73% · Regione Lombardia</small></span><span aria-hidden="true">↗</span></a></li>
+        <li><a href="https://www.comune.milano.it/argomenti/tributi/addizionale-comunale-irpef" target="_blank" rel="noopener noreferrer"><span><strong>Addizionale comunale</strong><small>0,8%, esenzione fino a 23.000 € · Comune di Milano</small></span><span aria-hidden="true">↗</span></a></li>
+        <li><a href="https://www.inps.it/it/it/inps-comunica/atti/circolari-messaggi-e-normativa/dettaglio.circolari-e-messaggi.2026.01.circolare-numero-6-del-30-01-2026_15151.html" target="_blank" rel="noopener noreferrer"><span><strong>Soglie contributive INPS</strong><small>Circolare 6 del 30 gennaio 2026 · INPS</small></span><span aria-hidden="true">↗</span></a></li>
+        <li><a href="https://www.inps.it/it/it/inps-comunica/diritti-e-obblighi-in-materia-di-sicurezza-sociale-nell-unione-e/per-le-imprese/aliquote-contributive.html" target="_blank" rel="noopener noreferrer"><span><strong>Perché i contributi variano</strong><small>Inquadramento e aliquote contributive · INPS</small></span><span aria-hidden="true">↗</span></a></li>
+      </ol>
     </section>
   </main>
-  <footer>
-    <p>Proiezione della retribuzione netta · anno d’imposta 2026. Non sostituisce un cedolino né il calcolo di un consulente del lavoro.</p>
-  </footer>
-  <script src="engine.js"></script>
-  <script src="app.js"></script>
+  <footer class="site-footer wrap"><span class="footer-brand">in chiaro.</span><p>Proiezione semplificata della retribuzione netta.<br>Non sostituisce un cedolino o una consulenza fiscale.</p><a href="docs/METODOLOGIA.md">Formule e metodologia ↗</a></footer>
 </body>
 </html>

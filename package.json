@@ -1,0 +1,13 @@
+{
+  "name": "in-chiaro-ral-netto",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Calcolatore trasparente RAL-netto 2026, scenario Milano",
+  "scripts": {
+    "test": "node --test tests/calc.test.cjs",
+    "test:browser": "node tests/browser.test.cjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
