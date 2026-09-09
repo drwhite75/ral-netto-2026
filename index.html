@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calcolatore netto da RAL 2026</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="top">
+    <div>
+      <p class="kicker">Calcolatore stipendio · 2026</p>
+      <h1>Da RAL a netto annuale</h1>
+      <p class="lede">Caso standard 2026: impiegato a tempo indeterminato, residente a Milano, nessuna agevolazione particolare. Motore in JavaScript visibile e commentato — non è una black box.</p>
+    </div>
+    <a class="doc-link" href="LOGICA.md">Come è fatto il calcolo →</a>
+  </header>
+  <main>
+    <section class="panel input-panel">
+      <form id="form" autocomplete="off">
+        <label for="ral">Retribuzione annua lorda (RAL)</label>
+        <div class="ral-row">
+          <span class="euro">€</span>
+          <input id="ral" name="ral" type="number" min="0" step="100" value="35000" required />
+        </div>
+        <p class="hint">La RAL include la tredicesima. Non include TFR (accantonato dal datore, non è una trattenuta in busta).</p>
+        <fieldset class="assumptions">
+          <legend>Ipotesi fisse di questo prototipo</legend>
+          <ul>
+            <li>Impiegato, tempo indeterminato, anno intero (365 giorni)</li>
+            <li>Residenza fiscale: Milano, Lombardia</li>
+            <li>Nessun familiare a carico, niente oneri deducibili, niente bonus / sgravi / welfare</li>
+            <li>Iscritto INPS dopo il 31/12/1995 (vale il massimale contributivo)</li>
+          </ul>
+        </fieldset>
+        <button type="submit" id="calcola">Calcola</button>
+      </form>
+    </section>
+    <section class="panel results" id="results" hidden>
+      <div class="kpis">
+        <article>
+          <h2>Netto annuale</h2>
+          <p class="big" id="netto-anno">—</p>
+        </article>
+        <article>
+          <h2>Netto mensile / 13</h2>
+          <p class="big" id="netto-13">—</p>
+          <p class="sub" id="netto-12"></p>
+        </article>
+        <article>
+          <h2>Tasse e imposte</h2>
+          <p class="big" id="tasse">—</p>
+          <p class="sub">IRPEF + addizionali − bonus fiscali in detrazione</p>
+        </article>
+      </div>
+      <h3>Voci trattenute dal lordo</h3>
+      <table class="breakdown" id="breakdown"></table>
+      <div class="grid-2">
+        <div>
+          <h3>Scaglioni IRPEF</h3>
+          <table class="mini" id="irpef-parts"></table>
+        </div>
+        <div>
+          <h3>Addizionale regionale Lombardia</h3>
+          <table class="mini" id="reg-parts"></table>
+        </div>
+      </div>
+      <p class="formula" id="formula"></p>
+    </section>
+  </main>
+  <footer>
+    <p>Proiezione della retribuzione netta · anno d’imposta 2026. Non sostituisce un cedolino né il calcolo di un consulente del lavoro.</p>
+  </footer>
+  <script src="engine.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
